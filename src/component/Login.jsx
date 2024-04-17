@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CryptoJS from 'crypto-js'; // Import CryptoJS for encryption
 import './css/Login.css'
 import design from './imgs/design.jpg'
 import returnIMG from './imgs/return.png'
@@ -8,7 +9,11 @@ import emailIMG from './imgs/email.png'
 import userIMG from './imgs/user.png'
 import passwordShowIMG from './imgs/passwordShow.png'
 import load from './imgs/load.png'
+import { useSelector,useDispatch } from 'react-redux';
+import { AddAuth,RemoveAuth } from '../Config/action'
 function Login() {
+  const auth = useSelector(data=>data);
+  const dispatch =useDispatch();
   const [divLogin, setDivLogin] = useState("translateX(0px)");
   const [divRegistre, setDivRegistre] = useState("translateX(1000px)");
   const [divValide, setDivValide] = useState("translateX(1000px)");
@@ -38,19 +43,35 @@ function Login() {
   const [msgValL, setMsgValL] = useState(""); 
   const [bgValL, setBgValL] = useState("var(--colorIncorrect)"); 
 
-  //load
+  // messageDispValid
+  const [dispValV, setDispValV] = useState("none"); 
+  const [msgValV, setMsgValV] = useState(""); 
+  const [bgValV, setBgValV] = useState("var(--colorIncorrect)"); 
+
+  //load registre
   const [textBtnR, setTextBtnR] = useState("flex"); 
   const [iconBtnR, setIconBtnR] = useState("flex"); 
   const [iconLoadR, setIconLoadR] = useState("none"); 
 
+  //load login
+  const [textBtnL, setTextBtnL] = useState("flex"); 
+  const [iconLoadL, setIconLoadL] = useState("none"); 
+
+  //load validation
+  const [textBtnV, setTextBtnV] = useState("flex"); 
+  const [iconLoadV, setIconLoadV] = useState("none"); 
+
   //value of validation
   const [validinp, setValidinp] = useState(""); 
+  const [emailValidinp, setEmailValidinp] = useState(""); 
 
   const goRegistre =()=>{
     setDivLogin("translateX(-1000px)");
     setDivRegistre("translateX(0px)");
     setDivValide("translateX(1000px)");
-
+    resetLoginForm();
+    inputsMakeItEmptyR();
+    resetValidationForm();
   }
   const goLogin =()=>{
     setDivLogin("translateX(0px)");
@@ -58,8 +79,13 @@ function Login() {
     MessageDisplay("none","","var(--colorIncorrect)");
     setDivValide("translateX(1000px)");
     inputsMakeItEmptyR();
+    resetLoginForm();
+    resetValidationForm();
   }
   const goValide =()=>{
+    inputsMakeItEmptyR();
+    resetLoginForm();
+    resetValidationForm();
     setDivValide("translateX(0px)");
     setDivLogin("translateX(-1000px)");
     setDivRegistre("translateX(1000px)");
@@ -109,6 +135,11 @@ function Login() {
     setMsgVal(msg);
     setBgVal(bg);
   }
+  const MessageDisplayValid=(disp,msg,bg)=>{
+    setDispValV(disp);
+    setMsgValV(msg);
+    setBgValV(bg);
+  }
   const MessageDisplayLogin=(disp,msg,bg)=>{
     setDispValL(disp);
     setMsgValL(msg);
@@ -119,23 +150,42 @@ function Login() {
     setIconBtnR(iconBtnR);
     setIconLoadR(iconLoadR);
   }
+  const loadAnimL=(textBtnL,iconLoadL)=>{
+    setTextBtnL(textBtnL);
+    setIconLoadL(iconLoadL);
+  }
+  const loadAnimV=(textBtnV,iconLoadV)=>{
+    setTextBtnV(textBtnV);
+    setIconLoadV(iconLoadV);
+  }
   const verifierDataLogin=()=>{
+    loadAnimL('none','flex');
     if(!(emailInpL===""||passwordInpL==="")){
       if(isEmailValid(emailInpL)){
         if(isPasswordValid(passwordInpL)){
-          goValide();
+          Login(emailInpL,passwordInpL);
         }else{
-          MessageDisplayLogin("flex","Use 8 characters at least in the password","var(--colorIncorrect)")
+          MessageDisplayLogin("flex","Use 8 characters at least in the password","var(--colorIncorrect)");
+          loadAnimL('flex','none');
         }
       }else{
         MessageDisplayLogin("flex","Email is not validated","var(--colorIncorrect)")
+        loadAnimL('flex','none');
       }
     }else{
-      MessageDisplayLogin("flex","Fill in all the fields","var(--colorIncorrect)")
+      MessageDisplayLogin("flex","Fill in all the fields","var(--colorIncorrect)");
+      loadAnimL('flex','none');
     }
   }
-
-  //verification Registre
+  const resetLoginForm =()=>{
+    setPasswordInpL("");
+    setEmailInpL("");
+    MessageDisplayLogin("none","","var(--colorCorrect)")
+  }
+  const resetValidationForm =()=>{
+    setValidinp("");
+    MessageDisplayValid("none","","var(--colorCorrect)")
+  }
   const verifierDataRegistre=()=>{
     loadAnimR("none","none","flex");
     if(!(fullNameInpR===""||emailInpR===""||phoneInpR===""||PasswordInpR==="")){
@@ -160,9 +210,28 @@ function Login() {
       loadAnimR("flex","flex","none");
     }
   }
+  const verifierDataValidation=()=>{
+    loadAnimV("none","flex");
+    console.log(emailValidinp);
+    if(emailValidinp!=""){
+      if(validinp.length===6){
+        validCode(emailValidinp,parseInt(validinp));
+      }else{
+        MessageDisplayValid("flex","Should enter 6 numbre","var(--colorIncorrect)");
+        loadAnimV("flex","none");
+      }
+    }else{
+      goLogin();
+      loadAnimV("flex","none");
+    }
+  }
+  const handleAuth = (email, id, password, business) => {
+    dispatch(AddAuth({ email, proId: id, password, business }));
+  };
   //connected with API
-  const addAccUser= async (fullName,email,phone,password)=>{
+  const addAccUser= async (fullName,email,phone,password1)=>{
     MessageDisplay("none","","var(--colorCorrect)");
+    let password =CryptoJS.SHA256(password1).toString();
     try{
       const response = await fetch('https://127.0.0.1:8000/accClient', {
           method: 'POST',
@@ -173,10 +242,15 @@ function Login() {
       });
       if (response.ok) {
           const responseData = await response.json();
-          if(responseData.state){
-            loadAnimR("flex","flex","none");
-            MessageDisplay("flex","User added successfully","var(--colorCorrect)");
-            inputsMakeItEmptyR();
+          if(!responseData.existUser){
+            if(responseData.state){
+              loadAnimR("flex","flex","none");
+              MessageDisplay("flex","User added successfully","var(--colorCorrect)");
+              inputsMakeItEmptyR();
+            }else{
+              MessageDisplay("flex","User already exists","var(--colorIncorrect)");
+              loadAnimR("flex","flex","none");
+            }
           }else{
             MessageDisplay("flex","User already exists","var(--colorIncorrect)");
             loadAnimR("flex","flex","none");
@@ -185,12 +259,94 @@ function Login() {
         MessageDisplay("flex","Connection problem with the server1","var(--colorIncorrect)");
         loadAnimR("flex","flex","none");
       }
-  }catch(error){
-    MessageDisplay("flex","Connection problem with the server2","var(--colorIncorrect)");
-    loadAnimR("flex","flex","none");
-  }
+    }catch(error){
+      MessageDisplay("flex","Connection problem with the server","var(--colorIncorrect)");
+      loadAnimR("flex","flex","none");
+    }
 
   }
+  const Login = async (email,password)=>{
+    try {
+      const response = await fetch('https://127.0.0.1:8000/validationEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email,password }),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        if(responseData.exist){
+          if(responseData.valide){
+            let hashPassword =CryptoJS.SHA256(password).toString();
+            if(email===responseData.email && hashPassword===responseData.password){
+              MessageDisplayLogin("flex","Login...","var(--colorCorrect)");
+              loadAnimL('flex','none');
+              const id= responseData.id;
+              const business= responseData.business;
+              handleAuth(email, id, password, business);
+              
+            }else{
+              MessageDisplayLogin("flex","Email or password incorect","var(--colorIncorrect)");
+              loadAnimL('flex','none');
+            }
+          }else{
+            loadAnimL('flex','none');
+            setEmailValidinp(email);
+            goValide();
+            resetLoginForm();
+          }
+        }else{
+          MessageDisplayLogin("flex","User does not exist","var(--colorIncorrect)");
+          loadAnimL('flex','none');
+        }
+      }else{
+        MessageDisplayLogin("flex","Connection problem with the server2","var(--colorIncorrect)");
+        loadAnimL('flex','none');
+      }
+    } catch (error) {
+      MessageDisplayLogin("flex","Connection problem with the server1","var(--colorIncorrect)");
+      loadAnimL('flex','none');
+    }
+
+  }
+  const validCode = async (email,numDeValidation)=>{
+    try {
+      const response = await fetch('https://127.0.0.1:8000/codevalidation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email,numDeValidation }),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        if(responseData.exist){
+          if(responseData.valide){
+            goLogin();
+            MessageDisplayLogin("flex","Your account was validated","var(--colorCorrect)");
+            loadAnimV("flex","none");
+          }else{
+            MessageDisplayValid("flex","Code is incorrect","var(--colorIncorrect)");
+            loadAnimV("flex","none");
+          }
+        }else{
+          goLogin();
+          loadAnimV("flex","none");
+        }
+      }else{
+        MessageDisplayValid("flex","Connection problem with the server","var(--colorIncorrect)");
+        loadAnimV("flex","none");
+      }
+    } catch (error) {
+      MessageDisplayValid("flex","Connection problem with the server","var(--colorIncorrect)");
+      loadAnimV("flex","none");
+    }
+  }
+
+
 
 
   return (
@@ -224,7 +380,8 @@ function Login() {
                 </div>
               </div>
               <button className='btnRegistreForm' onClick={verifierDataLogin}>
-                <span>Login</span> 
+                <span style={{ display: textBtnL}}>Login</span> 
+                <img src={load} className="loadImg" style={{ display: iconLoadL}} /> 
               </button>
               <div className="placequastionRegistre">
               I don't have an account?
@@ -299,13 +456,17 @@ function Login() {
                 <span className='nameOfApp'>TRAVNET</span>
               </div>
               <div className="titleRegistre titleMargin">Validate your Email</div>
+              <div className="MessagePlace" style={{ display: dispValV,backgroundColor:bgValV }}>
+                <span className='TextMessage'>{msgValV}</span>
+              </div>
               <div className="placeInput">
                 <div className="inputPlace">
                   <input type="text" className='inpvalide' value={validinp} onChange={(e)=>{setValidinp(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}}/>
                 </div>
               </div>
-              <button className='btnRegistreForm' onClick={verifierDataLogin}>
-                <span>Valid</span> 
+              <button className='btnRegistreForm' onClick={verifierDataValidation}>
+                <span style={{ display: textBtnV}}>Valid</span>
+                <img src={load} className="loadImg" style={{ display: iconLoadV}} /> 
               </button>
               <div className="placequastionValide">
               I don't have an account?
