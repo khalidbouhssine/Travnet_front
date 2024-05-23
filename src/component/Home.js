@@ -1,12 +1,29 @@
-import React from 'react';
+import React ,{useState}from 'react';
 import './css/Home.css';
 import bghome from './imgs/bghome.jpg'
 import travnet from './imgs/travnet.png'
 import date from './imgs/date.png'
 import location from './imgs/location.png'
 import searchFleche from './imgs/searchFleche.png'
+import menu from './imgs/menu.png'
+import close from './imgs/close.png'
+import des1 from './imgs/des1.jpg'
+import des2 from './imgs/des2.jpg'
+import Collection from '../part/Collection'
+import Footer from '../part/Footer'
 
 const Home = () => {
+    const [MenuMobile, setMenuMobile] = useState("translateX(1500px)");
+    const [MenuMobileBg, setMenuMobileBg] = useState("var(--colorBlackLowOpacity)");
+
+    const closeMenu = ()=>{
+        setMenuMobileBg("var(--colorVide)");
+        setMenuMobile("translateX(1500px)")
+    }
+    const openMenu = ()=>{
+        setMenuMobileBg("var(--colorBlackLowOpacity)");
+        setMenuMobile("translateX(0px)")
+    }
   return (
     <div className="Home">
         <div className="HomeCenter">
@@ -23,6 +40,9 @@ const Home = () => {
                         <div className="listMenuItem">Follow us</div>
                     </div>
                     <div className="signInBtn">Sign In</div>
+                    <div className="buttonOpenMenuMobile" onClick={openMenu}>
+                        <img src={menu} alt="menu" className="iconMenu"/>
+                    </div>
                 </div>
                 <div className="form">
                     <div className="formCentre">
@@ -67,7 +87,6 @@ const Home = () => {
                                 <div className="BtnFilter">Hotels</div>
                                 <div className="BtnFilter">Villas</div>
                                 <div className="BtnFilter">Appartements</div>
-                                <div className="BtnFilter">Travel Agency</div>
                             </div>
                             <div className="ButtonSearch">
                                 <div className="SearchText">Search</div>
@@ -79,6 +98,28 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+            <div className="gigTitle">Top trending hotel in worldwide</div>
+            <div className="smollTitle">Discover the most trending hotels worldwide for an unforgettable experience.</div>
+            <Collection/>
+            <div className="MenuMobileList" style={{backgroundColor:MenuMobileBg,transform:MenuMobile}}>
+                <div className="MenuMobileListCentre">
+                    <div className="ButtonCloseMenuPlace">
+                        <div className="ButtonCloseMenu" onClick={closeMenu}>
+                            <img src={close} alt="close" className="closeBtnIcon" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="gigTitle">Get promo for a cheaper price</div>
+            <div className="offrePlace">
+                <div className="offrePlaceItem">
+                    <img src={des1} alt="des1" className="imagedes" />
+                </div>
+                <div className="offrePlaceItem">
+                    <img src={des2} alt="des1" className="imagedes" />
+                </div>
+            </div>
+            <Footer/>
         </div>
     </div>
   );

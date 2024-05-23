@@ -1,3 +1,4 @@
+@import url('./librery.css');
 .Home{
     width: 100%;
     height: fit-content;
@@ -9,6 +10,8 @@
     height: fit-content;
     max-width: 1500PX;
     min-width: 300PX;
+    position: relative;
+    overflow: hidden;
 }
 .Home .Box{
     flex: 1;
@@ -97,7 +100,7 @@
 }
 .Home .formCentre{
     width: 97%;
-    height: 90%;
+    height: fit-content;
     background-color: white;
     border-radius: 8PX;
     overflow: hidden;
@@ -155,7 +158,7 @@
 }
 .Home .filtreAndBtn{
     flex: 1;
-    height: 60PX;
+    height: fit-content;
     margin-top: 10PX;
     margin-bottom: 10PX;
     display: flex;
@@ -223,7 +226,108 @@
     width: 100%;
     height: 100%;
 }
-
+.Home .buttonOpenMenuMobile{
+    width: 50PX;
+    height: 50PX;
+    margin-right: 10PX;
+    display: none;
+    border-radius: 5PX;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+.Home .iconMenu{
+    height: 70%;
+}
+.Home .MenuMobileList{
+    width: 100%;
+    height: 100vh;
+    background-color: var(--colorBlackLowOpacity);
+    position: absolute;
+    display: flex;
+    justify-content: end;
+    transform: translateX(100px);
+    transition: transform 1s ease;
+}
+.HomeCenter .MenuMobileList{
+    top: 0PX;
+    left: 0PX;
+}
+.Home .MenuMobileListCentre{
+    width: 80%;
+    height: 100vh;
+    background-color: white;
+    max-width: 800PX;
+    min-width: 300PX;
+}
+.Home .ButtonCloseMenuPlace{
+    width: 100%;
+    height: 60PX;
+    display: flex;
+    align-items: center;
+}
+.Home .ButtonCloseMenu{
+    width: 45PX;
+    height: 45PX;
+    border-radius: 5PX;
+    background-color: var(--colorBlack);
+    margin-left: 10PX;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.Home .closeBtnIcon{
+    width: 30PX;
+    height: 30PX;
+}
+.Home .gigTitle{
+    flex: 1;
+    height: fit-content;
+    font-family: var(--font1);
+    font-weight: bold;
+    font-size: 25PX;
+    padding-left: 5PX;
+    margin-top: 20PX;
+}
+.Home .smollTitle{
+    flex: 1;
+    height: fit-content;
+    font-family: var(--font1);
+    font-size: 17PX;
+    margin-top: 10PX;
+    color: var(--colorGray);
+    padding-left: 5PX;
+}
+.Home .offrePlace{
+    width: 100%;
+    height: 250PX;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 30PX;
+    margin-bottom: 30PX;
+}
+.Home .offrePlaceItem{
+    width: 45%;
+    height: 250PX;
+    max-width: 600PX;
+    min-width: 300PX;
+    background-color: rgb(190, 190, 190);
+    border-radius: 20PX;
+    overflow: hidden;
+    cursor: pointer;
+}
+.Home .offrePlaceItem:hover{
+    transform: scale(1.02);
+    box-shadow: 1PX 1PX 10PX #00000094;
+}
+.Home .imagedes{
+    width: 100%;
+    height: 100%;
+}
 
 
 
@@ -233,6 +337,56 @@
 @media (max-width: 1018PX) {
     .Home .bghomeImg{
         width: 1018PX;
+    }
+    .Home .signInBtn{
+        display: none;
+    }
+    .Home .listMenu{
+        display: none;
+    }
+    .Home .buttonOpenMenuMobile{
+        display: flex;
+    }
+}
+@media (max-width: 700PX) {
+    .Home .inpPlaceBox{
+        display: block;
+    }
+    .Home .inpPlace{
+        width: 100%;
+    }
+    .Home .filtreAndBtn{
+        display: block;
+    }
+    .Home .ButtonSearch{
+        margin-top: 10PX;
+    }
+    .Home .wordFilter{
+        font-size: 16PX;
+    }
+    .Home .BtnFilter{
+        height: 30PX;
+        font-family: 13PX;
+        margin-top: 10PX;
+    }
+    .Home .filterPlace{
+        flex-wrap: wrap;
+    }
+}
+@media (max-width: 650PX) {
+    .Home .offrePlace{
+        height: fit-content;
+        display: block;
+    }
+    .Home .offrePlaceItem{
+        width: 100%;
+        height: 250PX;
+        max-width: none;
+        min-width: none;
+        background-color: rgb(190, 190, 190);
+        border-radius: 20PX;
+        overflow: hidden;
+        margin-top: 20PX;
     }
 }
 @media (max-width: 600PX) {
