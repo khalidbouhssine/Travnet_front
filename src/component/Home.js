@@ -1,4 +1,4 @@
-import React ,{useState}from 'react';
+import React ,{useState,useEffect}from 'react';
 import './css/Home.css';
 import bghome from './imgs/bghome.jpg'
 import travnet from './imgs/travnet.png'
@@ -11,10 +11,18 @@ import des1 from './imgs/des1.jpg'
 import des2 from './imgs/des2.jpg'
 import Collection from '../part/Collection'
 import Footer from '../part/Footer'
+import { Link } from 'react-router-dom';
+
 
 const Home = () => {
     const [MenuMobile, setMenuMobile] = useState("translateX(1500px)");
     const [MenuMobileBg, setMenuMobileBg] = useState("var(--colorBlackLowOpacity)");
+
+    const [City, setCity] = useState("");
+    const [Checkin, setCheckin] = useState("");
+    const [Checkout, setCheckout] = useState("");
+
+
 
     const closeMenu = ()=>{
         setMenuMobileBg("var(--colorVide)");
@@ -24,6 +32,31 @@ const Home = () => {
         setMenuMobileBg("var(--colorBlackLowOpacity)");
         setMenuMobile("translateX(0px)")
     }
+    const logout=()=>{
+        localStorage.removeItem('authC');
+        window.location.href = "/loginuser";
+    }
+    
+  const verifierAuth=()=>{
+    if(localStorage.getItem('authC') !== null) {
+      var savedData = localStorage.getItem('authC');
+      var parsedData = JSON.parse(savedData);
+    } else {
+        window.location.href = "/loginuser";
+    }
+  }
+  useEffect(() => {
+    verifierAuth();
+  }, []);
+
+
+  const SearchBtn=()=>{
+    if(City!="" && Checkin!="" && Checkout!=""){
+        window.location.href = "/hotels/"+City+"/"+Checkin+"/"+Checkout;
+    }else{
+        alert("Fill in all fields")
+    }
+  }
   return (
     <div className="Home">
         <div className="HomeCenter">
@@ -33,13 +66,11 @@ const Home = () => {
                     <img src={travnet} alt="travnet" className="logo" />
                     <div className="listMenu">
                         <div className="listMenuItem">Home</div>
-                        <div className="listMenuItem">Services</div>
-                        <div className="listMenuItem">Contact</div>
-                        <div className="listMenuItem">About</div>
-                        <div className="listMenuItem">Reclamation</div>
-                        <div className="listMenuItem">Follow us</div>
+                        <a href="#tophotels" className="listMenuItem">Top Hotels</a>
+                        <Link to="/reclamations" className="listMenuItem">Reclamations</Link>
+                        <a href="#footer" className="listMenuItem">Follow us</a>
                     </div>
-                    <div className="signInBtn">Sign In</div>
+                    <div className="signInBtn" onClick={logout}>Logout</div>
                     <div className="buttonOpenMenuMobile" onClick={openMenu}>
                         <img src={menu} alt="menu" className="iconMenu"/>
                     </div>
@@ -54,7 +85,7 @@ const Home = () => {
                                         <img src={location} alt="location" className="IconeImgInp" />
                                     </div>
                                     <div className="inpForm">
-                                        <input type="text" className="inputForm" placeholder="Find location" />
+                                        <input type="text" className="inputForm" placeholder="Find location" value={City} onChange={(e)=>{setCity(e.target.value)}}/>
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +96,7 @@ const Home = () => {
                                         <img src={date} alt="location" className="IconeImgInp" />
                                     </div>
                                     <div className="inpForm">
-                                        <input type="date" className="inputForm" />
+                                        <input type="date" className="inputForm" value={Checkin} onChange={(e)=>{setCheckin(e.target.value)}}/>
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +107,7 @@ const Home = () => {
                                         <img src={date} alt="location" className="IconeImgInp" />
                                     </div>
                                     <div className="inpForm">
-                                        <input type="date" className="inputForm" />
+                                        <input type="date" className="inputForm" value={Checkout} onChange={(e)=>{setCheckout(e.target.value)}}/>
                                     </div>
                                 </div>
                             </div>
@@ -84,11 +115,11 @@ const Home = () => {
                         <div className="filtreAndBtn">
                             <div className="filterPlace">
                                 <div className="wordFilter">Filter:</div>
-                                <div className="BtnFilter">Hotels</div>
-                                <div className="BtnFilter">Villas</div>
-                                <div className="BtnFilter">Appartements</div>
+                                <div className="BtnFilter">Top</div>
+                                <div className="BtnFilter">Info</div>
+                                <div className="BtnFilter">Footer</div>
                             </div>
-                            <div className="ButtonSearch">
+                            <div className="ButtonSearch" onClick={SearchBtn}>
                                 <div className="SearchText">Search</div>
                                 <div className="IconSearch">
                                     <img src={searchFleche} alt="searchFleche" className="IconSearchImg" />

@@ -27,6 +27,14 @@ function DashboardAccount() {
   const [City, setCity] = useState("");
   const [Address, setAddress] = useState("");
 
+  //image
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imageProfile, setImageProfile] = useState("");
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
 
   const getDataRoom =async(idAcc)=>{
     try {
@@ -42,8 +50,6 @@ function DashboardAccount() {
 
         if (response.ok) {
             const responseData = await response.json();
-            console.log(idAcc);
-            console.log(responseData);
             if(responseData.stateDataAccBussiness){
                 setHotelName(responseData.hotel.name);
                 setDescription(responseData.hotel.description);
@@ -64,16 +70,66 @@ function DashboardAccount() {
         alert("Problem of connexion");
     }
   }
+
+  const getImageProfile=async()=>{
+    try {
+      const response = await fetch('https://127.0.0.1:8000/recupererimagehotel', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pattenteDehotele:Patent
+        }),
+      });
+
+      if (response.ok) {
+          const responseData = await response.json();
+          setImageProfile(responseData.pictureOfHotel);
+        }else{
+            alert("Problem of connexion");
+        }
+    } catch (error) {
+        alert("Problem of connexion");
+    }
+  }
+
   const verifierAuth=()=>{
     if(localStorage.getItem('auth') !== null) {
       var savedData = localStorage.getItem('auth');
       var parsedData = JSON.parse(savedData);
       getDataRoom(parsedData.userId);
+      getImageProfile();
   } else {
     window.location.href = "/LoginBusiness";
   }
   }
   verifierAuth();
+
+  const handleUpload = async () => {
+    if(selectedFile!=null){
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      formData.append('pattenteDehotele', Patent);
+  
+      const response = await fetch('https://127.0.0.1:8000/upload', {
+          method: 'POST',
+          body: formData,
+      });
+  
+      const result = await response.json();
+      if(result.stateimg && result.statename){
+        alert("Image change successful");
+        getImageProfile();
+        setSelectedFile(null);
+      }else{
+        alert("Image not change");
+      }
+    }else{
+      alert("Select image first")
+    }
+  };
+
 
   
   return (
@@ -84,7 +140,7 @@ function DashboardAccount() {
         <div className="rightpage">
           <div className="couverimg">
             <div className="imgAccount">
-              <img src={profilBusi} alt="profilBusi" className="profilBusi" />
+              <img src={`https://127.0.0.1:8000/uploads/images/${imageProfile}`} alt="wait..." className="profilBusi" />
             </div>
             <Link to="/dashboardaccountmodif" className="buttonModify">
               <img src={modify} alt="modify" className="modifyIcon" />
@@ -128,6 +184,15 @@ function DashboardAccount() {
             <div className="caractiresticItem marginBottomDiv">
                 <img src={location_c} alt="iconeCaract" className="iconeCaract" />
                 <div className="TextCaractirestic">Address: <span className="infAccountblack">{Address}</span></div>
+            </div>
+          </div>
+          <div className="PlaceModifyImg">
+            <div className="PlaceModifyImgCenter">
+            <input type="file" className="inpFile" id="inpFile" onChange={handleFileChange}/>
+              <label htmlFor="inpFile" className="inpFileImage" style={{backgroundColor: (selectedFile===null)? "#ffffff": "#17e347"}}>
+                Select your Image
+              </label>
+              <div className="btnFileImage" onClick={handleUpload}>CHANGE IMAGE</div>
             </div>
           </div>
         </div>

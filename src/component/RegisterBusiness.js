@@ -16,42 +16,88 @@ const RegisterBusiness = () => {
     const [Password, setPassword] = useState("");
     const [Patent, setPatent] = useState("");
 
+    const handleInputChangePhone = (event) => {
+        const { value } = event.target;
+    
+        if (/^\d*$/.test(value) && value.length <= 10) {
+          setPhone(value);
+        }
+    };
+    const handleInputChangeCIN = (event) => {
+        const { value } = event.target;
+    
+        if (value.length <= 10) {
+          setCIN(value);
+        }
+    };
+    const handleInputChangeCountry = (event) => {
+        const { value } = event.target;
+    
+        if (value.length <= 15) {
+          setCountry(value);
+        }
+    };
+    const handleInputChangePatent = (event) => {
+        const { value } = event.target;
+    
+        if (value.length <= 9) {
+          setPatent(value);
+        }
+    };
+    const validateEmail = (email) => {
+        // Regular expression for validating an email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     const Register=async()=>{
-        let hashPassword =CryptoJS.SHA256(Password).toString();
-        try {
-            const response = await fetch('https://127.0.0.1:8000/accBusiness', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                firstName:FirstName,
-                lastName:LastName,
-                email:Email,
-                phone:Phone, 
-                cinOrPassport:CIN, 
-                country:Country, 
-                password:hashPassword,
-                pattenteDehotele:Patent
-            }),
-            });
-      
-            if (response.ok) {
-                const responseData = await response.json();
-                if(!responseData.existUser){
-                    if(responseData.stateStore){
-                        addHotel(responseData.userId,Patent);
-                    }else{
-                        alert("Problem in sent data");
+        if(FirstName!="" && LastName!="" && Email!="" && Phone!="" && CIN!="" && Country!="" && Password!="" && Patent!=""){
+            if(validateEmail(Email)){
+                if(Phone.length==10 && Phone.split("")[0]==0){
+                    let hashPassword =CryptoJS.SHA256(Password).toString();
+                    try {
+                        const response = await fetch('https://127.0.0.1:8000/accBusiness', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            firstName:FirstName,
+                            lastName:LastName,
+                            email:Email,
+                            phone:Phone, 
+                            cinOrPassport:CIN, 
+                            country:Country, 
+                            password:hashPassword,
+                            pattenteDehotele:Patent
+                        }),
+                        });
+                
+                        if (response.ok) {
+                            const responseData = await response.json();
+                            if(!responseData.existUser){
+                                if(responseData.stateStore){
+                                    addHotel(responseData.userId,Patent);
+                                }else{
+                                    alert("Problem in sent data");
+                                }
+                            }else{
+                                alert("User already exist");
+                            }
+                        }else{
+                            alert("Problem of connexion");
+                        }
+                    } catch (error) {
+                        alert("Problem of connexion");
                     }
                 }else{
-                    alert("User already exist");
+                    alert("Phone incorrect");
                 }
-              }else{
-                  alert("Problem of connexion");
-              }
-        } catch (error) {
-            alert("Problem of connexion");
+            }else{
+                alert("Email incorrect");
+            }
+        }else{
+            alert("Fill in all fields");
         }
     }
 
@@ -64,8 +110,8 @@ const RegisterBusiness = () => {
               },
               body: JSON.stringify({
                 id:patent,
-                name:"XXXX",
-                rate:4,
+                name:"----",
+                rate:1,
                 location:"", 
                 city:"", 
                 description:"", 
@@ -83,6 +129,7 @@ const RegisterBusiness = () => {
             alert("Problem of connexion2");
         }
     }
+
 
   return (
     <div className="LoginuserPage">
@@ -112,25 +159,25 @@ const RegisterBusiness = () => {
                 <div className="inpPlace">
                     <div className="inpPlaceText">Phone</div>
                     <div className="inpPlaceInput">
-                        <input type="text" className="inp" placeholder="Phone" onChange={(e)=>{setPhone(e.target.value)}}/>
+                        <input type="text" className="inp" placeholder="Phone" value={Phone} onChange={handleInputChangePhone}/>
                     </div>
                 </div>
                 <div className="inpPlace">
                     <div className="inpPlaceText">CIN</div>
                     <div className="inpPlaceInput">
-                        <input type="text" className="inp" placeholder="CIN" onChange={(e)=>{setCIN(e.target.value)}}/>
+                        <input type="text" className="inp" placeholder="CIN" value={CIN} onChange={handleInputChangeCIN}/>
                     </div>
                 </div>
                 <div className="inpPlace">
                     <div className="inpPlaceText">Country</div>
                     <div className="inpPlaceInput">
-                        <input type="text" className="inp" placeholder="Country" onChange={(e)=>{setCountry(e.target.value)}}/>
+                        <input type="text" className="inp" placeholder="Country" value={Country} onChange={handleInputChangeCountry}/>
                     </div>
                 </div>
                 <div className="inpPlace">
                     <div className="inpPlaceText">Patent</div>
                     <div className="inpPlaceInput">
-                        <input type="text" className="inp" placeholder="Patent" onChange={(e)=>{setPatent(e.target.value)}}/>
+                        <input type="text" className="inp" placeholder="Patent" value={Patent} onChange={handleInputChangePatent}/>
                     </div>
                 </div>
                 <div className="inpPlace">

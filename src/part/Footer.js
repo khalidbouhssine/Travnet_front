@@ -4,7 +4,7 @@ import black_logo from '../component/imgs/travnet.png'
 function Footer() {
 
   return (
-    <div className="footerContainer">
+    <div className="footerContainer" id='footer'>
       <div className="descriptionCompany">
         <img src={black_logo} alt="black_logo" className="logo" />
         <div className="descriptionText">Our company offers a variety of services on our website, with transparent pricing. We focus on making your stay at our hotels comfortable and enjoyable. From luxurious rooms to excellent dining, we cater to all your needs. Our team is dedicated to providing exceptional service, ensuring a smooth and memorable stay. Whether for business or leisure, you can count on us for personalized care and a welcoming atmosphere. Experience quality and value at our hotels.</div>

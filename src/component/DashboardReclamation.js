@@ -1,120 +1,95 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './css/DashboardReclamation.css';
 import MenuDashboardLeft from '../part/MenuDashboardLeft'; 
 import MenuTop from '../part/MenuTop'; 
 
 function DashboardReclamation() {
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  const [patentHotel, setPatentHotel] = useState(0);
+  const [roomsList, setRoomsList] = useState([]);
+
+  const seeMore = (id) => {
+    if(id!=undefined){
+      window.location.href = "/dashboardreclamationunite/" + id.toString();
+    }
   };
 
-  const [pageNumber, setPageNumber] = useState(1);
-  const [maxtab, setMaxtab] = useState(1);
-  const [accBuss, setAccBuss] = useState(0);
-  const [patentHotel, setpatentHotel] = useState(0);
-  const [roomsList, setRoomsList] = useState("");
-  const currentDate = formatDate(new Date());
-  const [dateUsed, setDateUsed] = useState(currentDate);
-
-
-
-  const updateTable=async(pageNumber,accBussiness,patent)=>{
-    setRoomsList("");
+  const updateTable = async (patent) => {
     try {
-      const response = await fetch('https://127.0.0.1:8000/recuperChambres', {
+      const response = await fetch('https://127.0.0.1:8000/recupererreclamation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          idAccBussiness:accBussiness,
-          pattenteDeHotel:patent,
-          page:pageNumber,
-          dateFilter: dateUsed
-      }),
+          pattenteDeHotel: patent,
+        }),
       });
 
       if (response.ok) {
         const responseData = await response.json();
-        setMaxtab(responseData.totalChambres);
-        if(responseData.chambresExistent!=0){
-          if (responseData.chambres.length !== 0) {
-            responseData.chambres.forEach(function (chamber) {
-              let item = '<div class="trdiv"><div class="tritemdiv">' + chamber.numero_chambre.toString() + '</div><div class="tritemdiv">' + chamber.numeroEtage.toString() + '</div><div class="tritemdiv">' + ((chamber.available === 0) ? '<div class="yesDiv">YES</div>' : '<div class="noDiv">NO</div>') + '</div></div>';
-              setRoomsList(prevRoomsList => prevRoomsList + item);
-            });        
-          }   
-        }else{
-          let item = '<div class="roomnexist">Hotel Don\'t have Rooms</div>';
-          setRoomsList(prevRoomsList => prevRoomsList + item);
-        }   
-      }else{
-          alert("Problem of connexion");
+        if (responseData.state) {
+          if (responseData.reclamations.length !== 0) {
+            setRoomsList(responseData.reclamations);
+          } else {
+            setRoomsList([{ nomClient: "No claims", numeroEtage: "-", numero_chambre: "-" }]);
+          }
+        } else {
+          setRoomsList([{ nomClient: "-", numeroEtage: "-", numero_chambre: "-" }]);
+        }
+      } else {
+        alert("Problem with connection");
       }
     } catch (error) {
-        alert("Problem of connexion");
+      alert("Problem with connection");
     }
-  }
-  const plusPage=()=>{
-    if(pageNumber<Math.ceil(maxtab/5)){
-      updateTable(pageNumber+1,accBuss,patentHotel);
-      setPageNumber(prev => prev + 1);
-    }
-  }
-  const minusPage=()=>{
-    if(pageNumber>1){
-      updateTable(pageNumber-1,accBuss,patentHotel);
-      setPageNumber(prev => prev - 1);
-    }
-  }
+  };
 
-  const verifierAuth=()=>{
-    if(localStorage.getItem('auth') !== null) {
-      var savedData = localStorage.getItem('auth');
-      var parsedData = JSON.parse(savedData);
-      setAccBuss(parsedData.userId);
-      setpatentHotel(parsedData.patent);
-      updateTable(pageNumber,parsedData.userId,parsedData.patent);
-  } else {
-    window.location.href = "/LoginBusiness";
-  }
-  }
+  const verifierAuth = () => {
+    if (localStorage.getItem('auth') !== null) {
+      const savedData = localStorage.getItem('auth');
+      const parsedData = JSON.parse(savedData);
+      setPatentHotel(parsedData.patent);
+      updateTable(parsedData.patent);
+    } else {
+      window.location.href = "/LoginBusiness";
+    }
+  };
+
   useEffect(() => {
     verifierAuth();
   }, []);
 
-  const searchByDate=()=>{
-    updateTable(pageNumber, accBuss, patentHotel);
-  }
   return (
     <div className="DashboardProfildPage">
-      <MenuTop/>
+      <MenuTop />
       <div className="pageDashbord">
         <MenuDashboardLeft />
         <div className="rightpage">
           <div className="Allroom">
             <div className="MenuRoom">
-                <div className="blocMenu blocMenuLeft">ALL Claim</div>
+              <div className="blocMenu blocMenuLeft">ALL Claim</div>
             </div>
             <div className="tableRoom">
-                <div className="tableRoomCentre">
-                    <div className="thdiv">
-                        <div className="thitemdiv">Name</div>
-                        <div className="thitemdiv">Floor</div>
-                        <div className="thitemdiv">Room</div>
-                    </div>
-                    <div className="listTrdiv" dangerouslySetInnerHTML={{ __html: roomsList }}/>
-                    <div className="pagenationPlace">
-                      <div className="pagenationPlaceCentre">
-                          <div className="BtnPagenation" onClick={minusPage}>-</div>
-                          <div className="numberpagenation">{pageNumber}</div>
-                          <div className="BtnPagenation" onClick={plusPage}>+</div>
-                      </div>
-                    </div>
+              <div className="tableRoomCentre">
+                <div className="thdiv">
+                  <div className="thitemdiv">Name</div>
+                  <div className="thitemdiv">Floor</div>
+                  <div className="thitemdiv">Room</div>
                 </div>
+                <div className="listTrdiv">
+                  {roomsList.map((rec, index) => (
+                    <div
+                      className="trdiv"
+                      key={index}
+                      onClick={() => seeMore(rec.reclamationId)}
+                    >
+                      <div className="tritemdiv">{rec.nomClient}</div>
+                      <div className="tritemdiv">{rec.numeroEtage}</div>
+                      <div className="tritemdiv">{rec.numero_chambre}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -65,6 +65,7 @@
     font-weight: bold;
     font-size: 20PX;
     cursor: pointer;
+    text-decoration: none;
 }
 .Home .listMenuItem:hover{
     border-bottom: 2PX solid white;

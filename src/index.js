@@ -14,6 +14,13 @@ import DashboardRoomAddOne from './component/DashboardRoomAddOne';
 import DashboardRoomsAdd from './component/DashboardRoomsAdd';
 import DashboardBooking from './component/DashboardBooking';
 import DashboardReclamation from './component/DashboardReclamation';
+import DashboardReclamationUnite from './component/DashboardReclamationUnite';
+import Reclamations from './component/Reclamations';
+import Reclamation from './component/Reclamation';
+import DashboardRoomUnite from './component/DashboardRoomUnite';
+import HotelUnite from './component/HotelUnite';
+import Hotels from './component/Hotels';
+import Payment from './component/Payment';
 import { Provider } from 'react-redux';
 import { legacy_createStore } from 'redux';
 import reducer from './Config/reducer';
@@ -39,6 +46,13 @@ root.render(
         <Route path="/dashboardroomsadd" element={<DashboardRoomsAdd />} /> 
         <Route path="/dashboardbooking" element={<DashboardBooking />} /> 
         <Route path="/dashboardreclamation" element={<DashboardReclamation />} /> 
+        <Route path="/dashboardreclamationunite/*" element={<DashboardReclamationUnite />} /> 
+        <Route path="/reclamations" element={<Reclamations />} /> 
+        <Route path="/reclamation/*" element={<Reclamation />} /> 
+        <Route path="/dashboardroomunite/*" element={<DashboardRoomUnite />} /> 
+        <Route path="/hotels/*" element={<Hotels />} /> 
+        <Route path="/hotelunite/*" element={<HotelUnite />} /> 
+        <Route path="/payment/*" element={<Payment />} /> 
       </Routes>
     </Router>
   </Provider>

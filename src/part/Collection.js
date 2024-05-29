@@ -9,14 +9,13 @@ import villas from '../component/imgs/villas.png'
 
 const Collection = () => {
     return (
-        <div className="CollectionPart">
+        <div className="CollectionPart" id="tophotels">
             <div className="part">
                 <div className="partItem">
                     <div className="topPart">
                         <div className="topPartLeft">
                             <div className="TypeHotel">Mansour Eddahbi</div>
                             <div className="numberAndIcon">
-                                <img src={maison} alt="maison" className="maisonIcon" />
                                 <div className="number">12,984 available</div>
                             </div>
                         </div>
@@ -30,7 +29,6 @@ const Collection = () => {
                         <div className="topPartLeft">
                             <div className="TypeHotel">La Maison Arabe</div>
                             <div className="numberAndIcon">
-                                <img src={maison} alt="maison" className="maisonIcon" />
                                 <div className="number">12,984 available</div>
                             </div>
                         </div>
@@ -46,7 +44,6 @@ const Collection = () => {
                             <div className="topPartLeft">
                                 <div className="TypeHotel">Nobu</div>
                                 <div className="numberAndIcon">
-                                    <img src={maison} alt="maison" className="maisonIcon" />
                                     <div className="number">12,984 available</div>
                                 </div>
                             </div>
@@ -60,7 +57,6 @@ const Collection = () => {
                         <div className="topPartLeft">
                             <div className="TypeHotel">Riu Palace Tikida</div>
                             <div className="numberAndIcon">
-                                <img src={maison} alt="maison" className="maisonIcon" />
                                 <div className="number">12,984 available</div>
                             </div>
                         </div>
