@@ -45,7 +45,7 @@ function DashboardAccount() {
   
   const addRooms=async()=>{
     if(End!="" && Start!="" && Price!="" && Surface!="" && AirConditioner!="" && Bathroom!="" && Floor!="" && Description!=""){
-      if(Start<=End){
+      if(parseInt(Start)<=parseInt(End)){
         try {
           const response = await fetch('https://127.0.0.1:8000/addmultichambre', {
             method: 'POST',

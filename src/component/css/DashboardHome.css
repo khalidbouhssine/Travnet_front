@@ -197,6 +197,10 @@
     color: white;
     font-size: 40PX;
     display: flex;
-    align-items: center;
+    align-items: end;
     margin-top: 20PX;
+}
+.DashboardProfildPage .sousName {
+    font-size: 25PX;
+    margin-left: 10PX;
 }

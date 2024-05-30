@@ -13,36 +13,48 @@ function Reclamation() {
   const [Email, setEmail] = useState("");
   const [Description, setDescription] = useState("");
 
-
+  const validateEmail = (email) => {
+    // Regular expression for validating an email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const SendReclamation=async()=>{
-    try {
-      const response = await fetch('https://127.0.0.1:8000/addreclamation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          clientId:idClient,
-          email: Email,
-          description: Description,
-          pattenteDeHotel: idHotel,
-          numeroChambre: chamber
-      }),
-      });
-
-      if (response.ok) {
-        const responseData = await response.json();
-        if(responseData.state){
-          alert("Complaint sent successfully");
-        }else{
-          alert("Complaint not sent successfully");
+    if(Email!="" && Description!=""){
+      if(validateEmail(Email)){
+        try {
+          const response = await fetch('https://127.0.0.1:8000/addreclamation', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              clientId:idClient,
+              email: Email,
+              description: Description,
+              pattenteDeHotel: idHotel,
+              numeroChambre: chamber
+          }),
+          });
+    
+          if (response.ok) {
+            const responseData = await response.json();
+            if(responseData.state){
+              alert("Complaint sent successfully");
+            }else{
+              alert("Email is incorrect");
+            }
+          }else{
+              alert("Problem of connexion");
+          }
+        } catch (error) {
+            alert("Problem of connexion");
         }
       }else{
-          alert("Problem of connexion");
+        alert("Email incorrect");
       }
-    } catch (error) {
-        alert("Problem of connexion");
+    }else{
+      alert("Fill in all fields");
     }
   }
   const verifierAuth=()=>{

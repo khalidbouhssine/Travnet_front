@@ -79,7 +79,7 @@ const LoginBusiness = () => {
                     <div className="BtnLogin" onClick={Login}>Login</div>
                 </div>
                 <div className="BtnPlaceHotel">
-                    <Link to="/loginuser" className="BtnLoginHotels">Login</Link>
+                    <Link to="/loginuser" className="BtnLoginHotels">Login | User</Link>
                 </div>
                 <div className="LinkToRegister">
                     <span className="questionText">I don't have an account?</span>
