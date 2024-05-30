@@ -22,6 +22,8 @@ const Home = () => {
     const [Checkin, setCheckin] = useState("");
     const [Checkout, setCheckout] = useState("");
 
+    const [idClient, setidClient] = useState("");
+
 
 
     const closeMenu = ()=>{
@@ -41,6 +43,7 @@ const Home = () => {
     if(localStorage.getItem('authC') !== null) {
       var savedData = localStorage.getItem('authC');
       var parsedData = JSON.parse(savedData);
+      setidClient(parsedData.userId);
     } else {
         window.location.href = "/loginuser";
     }
@@ -67,10 +70,10 @@ const Home = () => {
                     <div className="listMenu">
                         <div className="listMenuItem">Home</div>
                         <a href="#tophotels" className="listMenuItem">Top Hotels</a>
-                        <Link to="/reclamations" className="listMenuItem">Reclamations</Link>
+                        <Link to="/reclamations" className="listMenuItem">Reservation</Link>
                         <a href="#footer" className="listMenuItem">Follow us</a>
                     </div>
-                    <div className="signInBtn" onClick={logout}>Logout</div>
+                    <div className="signInBtn" onClick={logout}>Logout Client({idClient})</div>
                     <div className="buttonOpenMenuMobile" onClick={openMenu}>
                         <img src={menu} alt="menu" className="iconMenu"/>
                     </div>
